@@ -1,4 +1,4 @@
-# 🚀 PROMETHEUS — Central de Helpdesk & Gestão de Incidentes
+# PROMETHEUS — Central de Helpdesk & Gestão de Incidentes
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Online-brightgreen?logo=github)](https://seu-usuario.github.io/nome-do-repositorio/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -8,7 +8,7 @@ Uma solução leve, completa e sem dependências externas de servidor para centr
 
 ---
 
-## 📌 Contexto & Motivação
+## Contexto & Motivação
 
 Com a necessidade de organizar os fluxos de atendimento do time de TI e sem *budget* imediato para a contratação de plataformas proprietárias de Service Desk, o sistema **PROMETHEUS** foi desenvolvido sob medida para prover:
 
@@ -18,25 +18,25 @@ Com a necessidade de organizar os fluxos de atendimento do time de TI e sem *bud
 
 ---
 
-## ✨ Principais Funcionalidades
+## Principais Funcionalidades
 
-- **🆔 Geração Única de Incidentes:** Padrão `INC-YYYYMMDD-XXXX` gerado automaticamente no ato da abertura.
-- **🏢 Polos Pré-cadastrados:** Suporte nativo aos endereços das unidades (Ponta Negra, Inoã, Itaipuaçu, Centro e IDS - Bairro Flamengo).
-- **🔄 Fluxo de Abertura & Conclusão:** Validação estrita de campos obrigatórios no registro e na baixa do chamado (solução aplicada, novos patrimônios em casos de troca e diagnósticos).
-- **🛠️ Tratamento para Demandas Internas:** Suporte ao patrimônio especial (`20261000`) para catalogação de manutenções preventivas e ações da equipe.
-- **📊 Dashboard de Indicadores (KPIs):**
+- **Geração Única de Incidentes:** Padrão `INC-YYYYMMDD-XXXX` gerado automaticamente no ato da abertura.
+- **Polos Pré-cadastrados:** Suporte nativo aos endereços das unidades (Ponta Negra, Inoã, Itaipuaçu, Centro e IDS - Bairro Flamengo).
+- **Fluxo de Abertura & Conclusão:** Validação estrita de campos obrigatórios no registro e na baixa do chamado (solução aplicada, novos patrimônios em casos de troca e diagnósticos).
+- **Tratamento para Demandas Internas:** Suporte ao patrimônio especial (`20261000`) para catalogação de manutenções preventivas e ações da equipe.
+- **Dashboard de Indicadores (KPIs):**
   - Média de Tempo de Atendimento (MTTR).
   - Rankings dos Solicitantes mais frequentes, Patrimônios críticos e Polos mais demandantes.
   - Distribuição da fila por tempo de espera.
-- **📁 Importação & Exportação Flexível:**
+- **Importação & Exportação Flexível:**
   - **Importador Inteligente (CSV):** Depara interativo de colunas para migração de histórico com identificação automática de duplicidades.
   - **Exportador CSV Corporativo:** Formatação em UTF-8 com BOM (compatível com Excel/Power BI sem erros de acentuação).
   - **Gerador & Leitor SQLite:** Leitura e gravação de banco de dados `.sqlite` / `.db` diretamente no navegador, além de suporte a exportação em `.sql` e backup em `.json`.
-- **⏰ Alertas de Pendência:** Notificações visuais e sonoras periódicas a cada 60 minutos para chamados abertos.
+- **Alertas de Pendência:** Notificações visuais e sonoras periódicas a cada 60 minutos para chamados abertos.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 - **Front-end:** HTML5 semântico, CSS3 (com arquitetura de Design System baseada no conceito *Forge/Dark Mode*), JavaScript Puro (ES6+).
 - **Banco de Dados Local & Portabilidade:**
@@ -46,7 +46,7 @@ Com a necessidade de organizar os fluxos de atendimento do time de TI e sem *bud
 
 ---
 
-## 🚀 Como Executar ou Hospedar
+## Como Executar ou Hospedar
 
 ### Opção 1: Execução Local
 1. Faça o clone do repositório ou baixe o arquivo `index.html`.
@@ -63,7 +63,7 @@ Com a necessidade de organizar os fluxos de atendimento do time de TI e sem *bud
 
 ---
 
-## 🗃️ Estrutura de Dados (Schema SQLite)
+## Estrutura de Dados (Schema SQLite)
 
 Quando exportado ou conectado a um banco SQLite, a tabela segue a seguinte estrutura:
 
@@ -86,3 +86,49 @@ CREATE TABLE chamados (
   criado_em TEXT,
   atualizado_em TEXT
 );
+```
+
+## Estrutura de pastas (MVC)
+
+
+```text
+prometheus-helpdesk-mvc/
+├── index.html
+├── assets/
+│   └── css/
+│       ├── base.css
+│       ├── layout.css
+│       └── components.css
+└── src/
+    ├── app.js
+    ├── config/
+    │   └── helpdesk.config.js
+    ├── utils/
+    │   └── core.js
+    ├── models/
+    │   ├── ticket.model.js
+    │   └── sqlite.mapper.js
+    ├── services/
+    │   ├── storage.service.js
+    │   ├── csv.service.js
+    │   └── sqlite.service.js
+    ├── views/
+    │   ├── ui.view.js
+    │   └── ticket.view.js
+    └── controllers/
+        ├── ticket.controller.js
+        ├── export.controller.js
+        ├── sqlite.controller.js
+        ├── import.controller.js
+        └── alert.controller.js
+```
+
+## Organização MVC
+
+- `models`: estado, regras e transformação dos chamados.
+- `views`: renderização da interface, fila, histórico e indicadores.
+- `controllers`: eventos de tela e coordenação dos casos de uso.
+- `services`: persistência, CSV e SQLite.
+- `config`: constantes do domínio.
+- `utils`: funções genéricas de DOM, texto e datas.
+- `app.js`: inicialização da aplicação.
