@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   PROMETHEUS — Central de Chamados
+  </title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+  <link href="assets/css/base.css" rel="stylesheet"/>
+  <link href="assets/css/layout.css" rel="stylesheet"/>
+  <link href="assets/css/components.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div aria-live="polite" class="toasts" id="toasts">
+  </div>
+  <header class="masthead">
+   <div class="masthead-inner">
+    <div class="brand">
+     <span aria-hidden="true" class="brand-mark">
+     </span>
+     <span class="brand-name">
+      Prometheus
+     </span>
+     <span class="brand-sub">
+      Central de Chamados
+     </span>
+    </div>
+    <div class="masthead-right">
+     <span class="pill" id="pillClock">
+      <span class="pill-dot">
+      </span>
+      <span id="clockText">
+       --:--
+      </span>
+     </span>
+     <span class="pill live zero" id="pillOpen">
+      <span class="pill-dot">
+      </span>
+      <span id="openText">
+       0 em aberto
+      </span>
+     </span>
+     <button class="btn btn-primary btn-sm" id="btnQuickNew">
+      Abrir chamado
+     </button>
+    </div>
+   </div>
+   <div class="masthead-inner tabs-row">
+    <nav aria-label="Seções do sistema" class="tabs w-full" role="tablist">
+     <button aria-selected="false" class="tab" data-panel="novo" role="tab">
+      Novo chamado
+     </button>
+     <button aria-selected="true" class="tab" data-panel="fila" role="tab">
+      Fila de trabalho
+      <span class="tab-count" id="cntFila">
+       0
+      </span>
+     </button>
+     <button aria-selected="false" class="tab" data-panel="historico" role="tab">
+      Histórico
+      <span class="tab-count" id="cntHist">
+       0
+      </span>
+     </button>
+     <button aria-selected="false" class="tab" data-panel="dashboard" role="tab">
+      Indicadores
+     </button>
+     <button aria-selected="false" class="tab" data-panel="dados" role="tab">
+      Dados e importação
+     </button>
+    </nav>
+   </div>
+  </header>
+  <main class="shell">
+   <section class="panel" id="panel-novo" role="tabpanel">
+    <div class="section-head">
+     <div class="eyebrow">
+      Registro
+     </div>
+     <h2 class="section-title">
+      Abrir um chamado
+     </h2>
+     <p class="section-desc">
+      O número é gerado automaticamente e não muda depois. Os campos marcados são obrigatórios para registrar o atendimento.
+     </p>
+    </div>
+    <div class="card">
+     <div class="grid grid-2">
+      <div class="field span-2">
+       <label class="lbl" for="f_tipo">
+        Tipo de chamado
+        <span class="req">
+         *
+        </span>
+       </label>
+       <select id="f_tipo">
+       </select>
+       <span class="addr" id="f_tipoHint">
+       </span>
+      </div>
+      <div class="field">
+       <label class="lbl" for="f_solicitante">
+        Nome do solicitante
+        <span class="req">
+         *
+        </span>
+       </label>
+       <input autocomplete="off" id="f_solicitante" list="dl_solicitantes" placeholder="Ex.: Ana Ribeiro" type="text"/>
+       <datalist id="dl_solicitantes">
+       </datalist>
+       <span class="field-error">
+        Informe quem solicitou o atendimento.
+       </span>
+      </div>
+      <div class="field">
+       <label class="lbl" for="f_local">
+        Polo de atendimento
+        <span class="req">
+         *
+        </span>
+       </label>
+       <select id="f_local">
+       </select>
+       <span class="addr" id="f_localEndereco">
+       </span>
+       <span class="field-error">
+        Escolha o polo de atendimento.
+       </span>
+      </div>
+      <div class="field">
+       <label class="lbl" for="f_patrimonio">
+        <span id="f_patLabel">
+         Número de patrimônio
+        </span>
+        <span class="req">
+         *
+        </span>
+       </label>
+       <input autocomplete="off" id="f_patrimonio" list="dl_patrimonios" placeholder="Ex.: PAT-99823 ou N/A" type="text"/>
+       <datalist id="dl_patrimonios">
+       </datalist>
+       <span class="field-error">
+        Informe o patrimônio ou use N/A.
+       </span>
+      </div>
+      <div class="field">
+       <label class="lbl" for="f_abertura">
+        Data e hora de abertura
+        <span class="req">
+         *
+        </span>
+       </label>
+       <input id="f_abertura" type="datetime-local"/>
+       <span class="field-error">
+        Informe uma data de abertura válida.
+       </span>
+      </div>
+      <div class="field span-2">
+       <label class="lbl" for="f_defeito">
+        Defeito relatado
+       </label>
+       <input id="f_defeito" placeholder="Ex.: Estação não liga após queda de energia" type="text"/>
+      </div>
+      <div class="field span-2">
+       <label class="lbl" for="f_anotacoes">
+        Anotações gerais
+       </label>
+       <textarea id="f_anotacoes" placeholder="Contexto, contato do solicitante, urgência, o que já foi tentado."></textarea>
+      </div>
+     </div>
+     <div class="btn-row mt-20">
+      <button class="btn btn-primary" id="btnCriar">
+       Registrar chamado
+      </button>
+      <button class="btn btn-quiet" id="btnLimparForm">
+       Limpar campos
+      </button>
+      <span class="meta-hint" id="nextIdHint">
+      </span>
+     </div>
+    </div>
+   </section>
+   <section class="panel active" id="panel-fila" role="tabpanel">
+    <div class="section-head">
+     <div class="eyebrow">
+      Em aberto
+     </div>
+     <h2 class="section-title">
+      Fila de trabalho
+     </h2>
+     <p class="section-desc">
+      Chamados aguardando conclusão, do mais antigo para o mais recente. A faixa lateral indica há quanto tempo o chamado está parado.
+     </p>
+    </div>
+    <div class="toolbar">
+     <input class="search" id="filaBusca" placeholder="Buscar por número, solicitante, patrimônio ou defeito" type="search"/>
+     <select id="filaLocal">
+      <option value="">
+       Todos os locais
+      </option>
+     </select>
+     <select id="filaOrdem">
+      <option value="antigos">
+       Mais antigos primeiro
+      </option>
+      <option value="recentes">
+       Mais recentes primeiro
+      </option>
+     </select>
+    </div>
+    <div class="queue" id="filaLista">
+    </div>
+   </section>
+   <section class="panel" id="panel-historico" role="tabpanel">
+    <div class="section-head">
+     <div class="eyebrow">
+      Concluídos
+     </div>
+     <h2 class="section-title">
+      Histórico de atendimentos
+     </h2>
+     <p class="section-desc">
+      Todo chamado finalizado, com o tempo total de atendimento calculado entre abertura e conclusão.
+     </p>
+    </div>
+    <div class="toolbar">
+     <input class="search" id="histBusca" placeholder="Buscar por número, solicitante, patrimônio, local ou solução" type="search"/>
+     <select id="histLocal">
+      <option value="">
+       Todos os locais
+      </option>
+     </select>
+     <button class="btn btn-ghost" id="btnExportHist">
+      Exportar esta lista
+     </button>
+    </div>
+    <div class="table-wrap">
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Chamado
+        </th>
+        <th>
+         Solicitante
+        </th>
+        <th>
+         Tipo
+        </th>
+        <th>
+         Local
+        </th>
+        <th>
+         Patrimônio
+        </th>
+        <th>
+         Abertura
+        </th>
+        <th>
+         Conclusão
+        </th>
+        <th>
+         Tempo
+        </th>
+        <th>
+         Solução
+        </th>
+        <th>
+        </th>
+       </tr>
+      </thead>
+      <tbody id="histCorpo">
+      </tbody>
+     </table>
+    </div>
+    <div id="histVazio">
+    </div>
+   </section>
+   <section class="panel" id="panel-dashboard" role="tabpanel">
+    <div class="section-head">
+     <div class="eyebrow">
+      Indicadores
+     </div>
+     <h2 class="section-title">
+      Panorama do atendimento
+     </h2>
+     <p class="section-desc">
+      Métricas calculadas sobre toda a base registrada, incluindo os chamados importados da planilha.
+     </p>
+    </div>
+    <div class="grid grid-4" id="kpis">
+    </div>
+    <div class="grid grid-3 mt-16">
+     <div class="card">
+      <div class="card-title">
+       Solicitantes mais frequentes
+      </div>
+      <div class="card-hint">
+       Quem mais abre chamados
+      </div>
+      <div class="rank" id="rankSolicitantes">
+      </div>
+     </div>
+     <div class="card">
+      <div class="card-title">
+       Equipamentos com mais manutenção
+      </div>
+      <div class="card-hint">
+       Patrimônios reincidentes
+      </div>
+      <div class="rank" id="rankPatrimonios">
+      </div>
+     </div>
+     <div class="card">
+      <div class="card-title">
+       Locais com maior demanda
+      </div>
+      <div class="card-hint">
+       Onde o time mais atende
+      </div>
+      <div class="rank" id="rankLocais">
+      </div>
+     </div>
+    </div>
+    <div class="grid grid-2 mt-16">
+     <div class="card">
+      <div class="card-title">
+       Chamados por tipo
+      </div>
+      <div class="card-hint">
+       Composição do trabalho do time
+      </div>
+      <div class="rank" id="rankTipos">
+      </div>
+     </div>
+     <div class="card">
+      <div class="card-title">
+       Envelhecimento da fila
+      </div>
+      <div class="card-hint">
+       Distribuição dos chamados abertos por tempo de espera
+      </div>
+      <div class="rank" id="rankIdade">
+      </div>
+     </div>
+    </div>
+   </section>
+   <section class="panel" id="panel-dados" role="tabpanel">
+    <div class="section-head">
+     <div class="eyebrow">
+      Base de dados
+     </div>
+     <h2 class="section-title">
+      Importar, exportar e manter
+     </h2>
+     <p class="section-desc">
+      Traga os chamados que já estão na planilha, exporte para análise gerencial e guarde uma cópia de segurança da base.
+     </p>
+    </div>
+    <div class="card">
+     <div class="card-title">
+      Importar chamados
+     </div>
+     <div class="card-hint">
+      Aceita planilha em CSV, banco SQLite, dump SQL e cópia de segurança em JSON. Para o CSV você confere a correspondência das colunas antes de gravar.
+     </div>
+     <div class="dropzone" id="dropzone" role="button" tabindex="0">
+      <div class="dropzone-title">
+       Solte o arquivo aqui
+      </div>
+      <p>
+       ou clique para escolher — .csv, .sqlite, .db, .sql ou .json
+      </p>
+     </div>
+     <input accept=".csv,.json,.sql,.sqlite,.db,.sqlite3" hidden="" id="fileInput" type="file"/>
+    </div>
+    <div class="card">
+     <div class="card-title">
+      Banco SQLite
+     </div>
+     <div class="card-hint">
+      Conecte um arquivo .sqlite e toda abertura, edição, exclusão ou importação passa a ser gravada nele automaticamente.
+     </div>
+     <div class="note" id="sqliteStatus">
+      Verificando o suporte do navegador…
+     </div>
+     <div class="btn-row mt-16">
+      <button class="btn btn-primary" id="btnConectarSqlite">
+       Conectar arquivo SQLite
+      </button>
+      <button class="btn btn-ghost" id="btnAbrirSqlite">
+       Abrir um banco existente
+      </button>
+      <button class="btn btn-ghost" id="btnBaixarSqlite">
+       Baixar o banco agora
+      </button>
+      <button class="btn btn-quiet" id="btnDumpSql">
+       Baixar dump .sql
+      </button>
+      <button class="btn btn-quiet" hidden="" id="btnDesconectarSqlite">
+       Desconectar
+      </button>
+     </div>
+    </div>
+    <div class="card">
+     <div class="card-title">
+      Exportar para análise
+     </div>
+     <div class="card-hint">
+      Arquivo CSV em UTF-8 com BOM, abre direto no Excel com acentuação correta e traz o tempo de atendimento já calculado.
+     </div>
+     <div class="grid grid-2 mb-16">
+      <div class="field">
+       <label class="lbl" for="expEscopo">
+        O que exportar
+       </label>
+       <select id="expEscopo">
+        <option value="todos">
+         Todos os chamados
+        </option>
+        <option value="abertos">
+         Somente em aberto
+        </option>
+        <option value="concluidos">
+         Somente concluídos
+        </option>
+       </select>
+      </div>
+      <div class="field">
+       <label class="lbl" for="expDelim">
+        Separador de colunas
+       </label>
+       <select id="expDelim">
+        <option value=";">
+         Ponto e vírgula — Excel em português
+        </option>
+        <option value=",">
+         Vírgula — padrão internacional
+        </option>
+       </select>
+      </div>
+     </div>
+     <div class="btn-row">
+      <button class="btn btn-primary" id="btnExportCsv">
+       Exportar CSV
+      </button>
+      <button class="btn btn-ghost" id="btnBackup">
+       Baixar cópia de segurança (JSON)
+      </button>
+     </div>
+    </div>
+    <div class="card">
+     <div class="card-title">
+      Alertas de pendência
+     </div>
+     <div class="card-hint">
+      A cada 60 minutos o sistema lembra quantos chamados seguem sem fechamento.
+     </div>
+     <div class="stack-12">
+      <label class="check-line">
+       <input id="cfgSom" type="checkbox"/>
+       Tocar um aviso sonoro junto com o alerta
+      </label>
+      <label class="check-line">
+       <input id="cfgDesktop" type="checkbox"/>
+       Enviar também como notificação do sistema
+      </label>
+      <div class="btn-row">
+       <button class="btn btn-ghost btn-sm" id="btnTestAlert">
+        Ver como fica o alerta
+       </button>
+       <span class="meta-hint-small" id="nextAlertHint">
+       </span>
+      </div>
+     </div>
+    </div>
+    <div class="card">
+     <div class="card-title">
+      Onde os dados ficam
+     </div>
+     <div class="card-hint">
+      Leia antes de apagar qualquer coisa.
+     </div>
+     <div class="note" id="storageNote">
+      Verificando o armazenamento…
+     </div>
+     <div class="btn-row mt-16">
+      <button class="btn btn-danger btn-sm" id="btnWipe">
+       Apagar toda a base
+      </button>
+     </div>
+    </div>
+   </section>
+   <div class="foot">
+    <span>
+     Prometheus — Central de Chamados de TI
+    </span>
+    <span id="footStats">
+     —
+    </span>
+   </div>
+  </main>
+  <div class="modal-backdrop" id="modalFechar">
+   <div aria-labelledby="fecharTitle" aria-modal="true" class="modal" role="dialog">
+    <div class="modal-head">
+     <div>
+      <div class="modal-title" id="fecharTitle">
+       Concluir chamado
+      </div>
+      <div class="modal-sub" id="fecharId">
+       —
+      </div>
+     </div>
+     <button aria-label="Fechar" class="modal-close" data-close="modalFechar">
+      ×
+     </button>
+    </div>
+    <div class="modal-body">
+     <div class="grid grid-2">
+      <div class="field span-2">
+       <label class="lbl" for="c_conclusao">
+        Data e hora da conclusão
+        <span class="req">
+         *
+        </span>
+       </label>
+       <input id="c_conclusao" type="datetime-local"/>
+       <span class="field-error">
+        A conclusão não pode ser anterior à abertura.
+       </span>
+      </div>
+      <div class="field span-2">
+       <label class="lbl" for="c_defeito">
+        Classificação do defeito
+       </label>
+       <input id="c_defeito" list="dl_defeitos" placeholder="Ex.: Fonte queimada" type="text"/>
+       <datalist id="dl_defeitos">
+       </datalist>
+      </div>
+      <div class="field span-2" hidden="" id="wrap_c_patrimonioNovo">
+       <label class="lbl" for="c_patrimonioNovo">
+        Patrimônio do equipamento novo
+        <span class="req">
+         *
+        </span>
+       </label>
+       <input autocomplete="off" id="c_patrimonioNovo" placeholder="Ex.: PAT-10440" type="text"/>
+       <span class="field-error">
+        Informe o patrimônio do equipamento instalado.
+       </span>
+      </div>
+      <div class="field span-2">
+       <label class="lbl" for="c_solucao">
+        Solução aplicada
+        <span class="req">
+         *
+        </span>
+       </label>
+       <textarea id="c_solucao" placeholder="Descreva o que foi feito para resolver."></textarea>
+       <span class="field-error">
+        Descreva a solução aplicada.
+       </span>
+      </div>
+      <div class="field span-2">
+       <label class="lbl" for="c_anotacoes">
+        Anotações gerais
+       </label>
+       <textarea id="c_anotacoes" placeholder="Peças trocadas, pendências, recomendações."></textarea>
+      </div>
+     </div>
+     <div class="completion-hint" id="c_tempoHint">
+     </div>
+    </div>
+    <div class="modal-foot">
+     <button class="btn btn-quiet" data-close="modalFechar">
+      Cancelar
+     </button>
+     <button class="btn btn-primary" id="btnConfirmarFechar">
+      Concluir chamado
+     </button>
+    </div>
+   </div>
+  </div>
+  <div class="modal-backdrop" id="modalEditar">
+   <div aria-labelledby="editarTitle" aria-modal="true" class="modal" role="dialog">
+    <div class="modal-head">
+     <div>
+      <div class="modal-title" id="editarTitle">
+       Editar chamado
+      </div>
+      <div class="modal-sub" id="editarId">
+       —
+      </div>
+     </div>
+     <button aria-label="Fechar" class="modal-close" data-close="modalEditar">
+      ×
+     </button>
+    </div>
+    <div class="modal-body">
+     <div class="grid grid-2">
+      <div class="field">
+       <label class="lbl" for="e_solicitante">
+        Solicitante
+        <span class="req">
+         *
+        </span>
+       </label>
+       <input id="e_solicitante" list="dl_solicitantes" type="text"/>
+       <span class="field-error">
+        Informe o solicitante.
+       </span>
+      </div>
+      <div class="field">
+       <label class="lbl" for="e_local">
+        Polo de atendimento
+        <span class="req">
+         *
+        </span>
+       </label>
+       <select id="e_local">
+       </select>
+       <span class="addr" id="e_localEndereco">
+       </span>
+       <span class="field-error">
+        Escolha o polo de atendimento.
+       </span>
+      </div>
+      <div class="field">
+       <label class="lbl" for="e_patrimonio">
+        Patrimônio
+        <span class="req">
+         *
+        </span>
+       </label>
+       <input id="e_patrimonio" list="dl_patrimonios" type="text"/>
+       <span class="field-error">
+        Informe o patrimônio ou use N/A.
+       </span>
+      </div>
+      <div class="field">
+       <label class="lbl" for="e_patrimonioNovo">
+        Patrimônio novo
+        <span class="muted-inline">
+         (troca)
+        </span>
+       </label>
+       <input autocomplete="off" id="e_patrimonioNovo" type="text"/>
+      </div>
+      <div class="field">
+       <label class="lbl" for="e_tipo">
+        Tipo de chamado
+       </label>
+       <select id="e_tipo">
+       </select>
+      </div>
+      <div class="field">
+       <label class="lbl" for="e_status">
+        Situação
+       </label>
+       <select id="e_status">
+        <option value="ABERTO">
+         Em aberto
+        </option>
+        <option value="CONCLUIDO">
+         Concluído
+        </option>
+       </select>
+      </div>
+      <div class="field">
+       <label class="lbl" for="e_abertura">
+        Abertura
+        <span class="req">
+         *
+        </span>
+       </label>
+       <input id="e_abertura" type="datetime-local"/>
+       <span class="field-error">
+        Data de abertura inválida.
+       </span>
+      </div>
+      <div class="field">
+       <label class="lbl" for="e_conclusao">
+        Conclusão
+       </label>
+       <input id="e_conclusao" type="datetime-local"/>
+       <span class="field-error">
+        A conclusão precisa ser posterior à abertura.
+       </span>
+      </div>
+      <div class="field span-2">
+       <label class="lbl" for="e_defeito">
+        Defeito
+       </label>
+       <input id="e_defeito" list="dl_defeitos" type="text"/>
+      </div>
+      <div class="field span-2">
+       <label class="lbl" for="e_solucao">
+        Solução aplicada
+       </label>
+       <textarea id="e_solucao"></textarea>
+       <span class="field-error">
+        Chamado concluído precisa de solução registrada.
+       </span>
+      </div>
+      <div class="field span-2">
+       <label class="lbl" for="e_anotacoes">
+        Anotações gerais
+       </label>
+       <textarea id="e_anotacoes"></textarea>
+      </div>
+     </div>
+     <div class="meta-hint" id="e_origem">
+     </div>
+    </div>
+    <div class="modal-foot">
+     <button class="btn btn-danger left" id="btnExcluir">
+      Excluir chamado
+     </button>
+     <button class="btn btn-quiet" data-close="modalEditar">
+      Cancelar
+     </button>
+     <button class="btn btn-primary" id="btnSalvarEdicao">
+      Salvar alterações
+     </button>
+    </div>
+   </div>
+  </div>
+  <div class="modal-backdrop" id="modalConfirma">
+   <div aria-labelledby="confirmaTitulo" aria-modal="true" class="modal modal-compact" role="dialog">
+    <div class="modal-head">
+     <div>
+      <div class="modal-title" id="confirmaTitulo">
+       Confirmar
+      </div>
+     </div>
+     <button aria-label="Fechar" class="modal-close" data-close="modalConfirma">
+      ×
+     </button>
+    </div>
+    <div class="modal-body">
+     <div class="confirm-message" id="confirmaMsg">
+     </div>
+    </div>
+    <div class="modal-foot" id="confirmaBotoes">
+    </div>
+   </div>
+  </div>
+  <div class="modal-backdrop" id="modalImport">
+   <div aria-labelledby="importTitle" aria-modal="true" class="modal wide" role="dialog">
+    <div class="modal-head">
+     <div>
+      <div class="modal-title" id="importTitle">
+       Importar chamados
+      </div>
+      <div class="modal-sub" id="importFile">
+       —
+      </div>
+     </div>
+     <button aria-label="Fechar" class="modal-close" data-close="modalImport">
+      ×
+     </button>
+    </div>
+    <div class="modal-body">
+     <div class="count-strip" id="importResumo">
+     </div>
+     <div class="card-title title-tight">
+      Como estes chamados entram
+     </div>
+     <div class="card-hint">
+      O tempo de atendimento não é pedido na importação — ele fica em branco e o histórico mostra “não informado”.
+     </div>
+     <div class="grid grid-2 mb-22">
+      <div class="field">
+       <label class="lbl" for="impSituacao">
+        Situação dos chamados importados
+       </label>
+       <select id="impSituacao">
+        <option value="CONCLUIDO">
+         Concluídos — sem tempo de atendimento
+        </option>
+        <option value="ABERTO">
+         Em aberto — entram na fila de trabalho
+        </option>
+       </select>
+      </div>
+      <div class="field">
+       <label class="lbl" for="impLocalPadrao">
+        Polo quando a planilha não indicar
+       </label>
+       <select id="impLocalPadrao">
+       </select>
+      </div>
+     </div>
+     <div class="card-title title-tight">
+      Ligue as colunas da planilha aos campos do sistema
+     </div>
+     <div class="card-hint">
+      Deixe em branco o que não existir na planilha — o sistema preenche com um valor padrão.
+     </div>
+     <div class="map-grid" id="mapGrid">
+     </div>
+     <div class="import-review-head">
+      <div>
+       <div class="card-title title-tight">
+        Confira antes de importar
+       </div>
+       <div class="card-hint no-margin">
+        Linhas repetidas vêm desmarcadas. Marque se quiser trazer mesmo assim.
+       </div>
+      </div>
+      <div class="btn-row push-right">
+       <button class="btn btn-quiet btn-sm" id="btnMarcarTodos">
+        Marcar todas
+       </button>
+       <button class="btn btn-quiet btn-sm" id="btnMarcarNovos">
+        Só as novas
+       </button>
+      </div>
+     </div>
+     <div class="table-wrap preview-table">
+      <table>
+       <thead>
+        <tr>
+         <th class="checkbox-column">
+         </th>
+         <th>
+          Conferência
+         </th>
+         <th>
+          Solicitante
+         </th>
+         <th>
+          Tipo
+         </th>
+         <th>
+          Polo
+         </th>
+         <th>
+          Patrimônio
+         </th>
+         <th>
+          Abertura
+         </th>
+         <th>
+          Defeito
+         </th>
+        </tr>
+       </thead>
+       <tbody id="previewCorpo">
+       </tbody>
+      </table>
+     </div>
+     <div class="preview-note" id="previewNota">
+     </div>
+    </div>
+    <div class="modal-foot">
+     <button class="btn btn-quiet" data-close="modalImport">
+      Cancelar
+     </button>
+     <button class="btn btn-primary" id="btnConfirmarImport">
+      Importar selecionados
+     </button>
+    </div>
+   </div>
+  </div>
+  <script defer="" src="src/utils/core.js">
+  </script>
+  <script defer="" src="src/config/helpdesk.config.js">
+  </script>
+  <script defer="" src="src/services/storage.service.js">
+  </script>
+  <script defer="" src="src/models/ticket.model.js">
+  </script>
+  <script defer="" src="src/services/csv.service.js">
+  </script>
+  <script defer="" src="src/services/sqlite.service.js">
+  </script>
+  <script defer="" src="src/models/sqlite.mapper.js">
+  </script>
+  <script defer="" src="src/views/ui.view.js">
+  </script>
+  <script defer="" src="src/views/ticket.view.js">
+  </script>
+  <script defer="" src="src/controllers/ticket.controller.js">
+  </script>
+  <script defer="" src="src/controllers/export.controller.js">
+  </script>
+  <script defer="" src="src/controllers/sqlite.controller.js">
+  </script>
+  <script defer="" src="src/controllers/import.controller.js">
+  </script>
+  <script defer="" src="src/controllers/alert.controller.js">
+  </script>
+  <script defer="" src="src/app.js">
+  </script>
+ </body>
+</html>
+
