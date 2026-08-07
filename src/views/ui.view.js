@@ -51,7 +51,7 @@ $("#confirmaBotoes").addEventListener("click", (ev) => {
   //if(r) r(b.getAttribute("data-op"));
   const r = resolverConfirma;
   resolverConfirma = null;
-  fechaModal("modalConfirma");
+  fecharModal("modalConfirma");
   if(r) r(b.getAttribute("data-op"));
 });
 
