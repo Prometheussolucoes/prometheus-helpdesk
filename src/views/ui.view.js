@@ -45,12 +45,17 @@ function perguntar(titulo, mensagem, opcoes){
 $("#confirmaBotoes").addEventListener("click", (ev) => {
   const b = ev.target.closest("[data-op]");
   if(!b) return;
-  fecharModal("modalConfirma");
-  const r = resolverConfirma; resolverConfirma = null;
+  //fecharModal("modalConfirma");
+  //const r = resolverConfirma; 
+  //resolverConfirma = null;
+  //if(r) r(b.getAttribute("data-op"));
+  const r = resolverConfirma;
+  resolverConfirma = null;
+  fechaModal("modalConfirma");
   if(r) r(b.getAttribute("data-op"));
 });
 
-function marcarErro(campoId, erro){
+function marcarErro(campoId, erro){2
   const el = $("#" + campoId);
   if(!el) return;
   const wrap = el.closest(".field");
