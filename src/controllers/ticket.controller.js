@@ -214,3 +214,4 @@ $("#btnQuickNew").addEventListener("click", () => { abrirAba("novo"); setTimeout
 
 ["#filaBusca","#filaLocal","#filaOrdem"].forEach(s => $(s).addEventListener("input", renderFila));
 ["#histBusca","#histLocal"].forEach(s => $(s).addEventListener("input", renderHistorico));
+$("#dashMttrMes").addEventListener("input", renderDashboard);

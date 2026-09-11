@@ -122,6 +122,44 @@ function pintarRanking(elId, dados, sufixo){
       <div class="rank-bar"><div class="rank-fill" style="--rank-width:${Math.round(n / max * 100)}%"></div></div>
     </div>`).join("");
 }
+const NOMES_MES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+function chaveMes(data){
+  const d = data instanceof Date ? data : new Date(data);
+  return isNaN(d) ? null : `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
+}
+function rotuloMes(chave){
+  const [ano, mes] = chave.split("-").map(Number);
+  return `${NOMES_MES[mes - 1]}/${ano}`;
+}
+function renderOpcoesMesDashboard(fechados){
+  const sel = $("#dashMttrMes");
+  const chaveAtual = chaveMes(new Date());
+  const anterior = sel.value;
+
+  const chaves = new Set([chaveAtual]);
+  fechados.forEach(c => { const k = chaveMes(c.conclusao); if(k) chaves.add(k); });
+
+  const ordenadas = Array.from(chaves).sort().reverse();
+  sel.innerHTML = ordenadas
+    .map(k => `<option value="${k}">${rotuloMes(k)}${k === chaveAtual ? " (mês atual)" : ""}</option>`)
+    .join("");
+  sel.value = ordenadas.indexOf(anterior) >= 0 ? anterior : chaveAtual;
+  return sel.value;
+}
+function pintarMttrPeriodo(mttrTotal, duracoesTotal, mttrPeriodo, duracoesPeriodo, chaveSelecionada){
+  const cards = [
+    { lbl: "MTTR total (toda a base)", val: mttrTotal == null ? "—" : fmtDuracao(mttrTotal),
+      sub: duracoesTotal.length ? `base de ${duracoesTotal.length} com tempo registrado` : "nenhum tempo registrado ainda" },
+    { lbl: `MTTR — ${rotuloMes(chaveSelecionada)}`, val: mttrPeriodo == null ? "—" : fmtDuracao(mttrPeriodo),
+      sub: duracoesPeriodo.length ? `base de ${duracoesPeriodo.length} com tempo registrado` : "nenhum chamado concluído nesse mês", accent: true }
+  ];
+  $("#mttrPeriodo").innerHTML = cards.map(c => `
+    <div class="kpi ${c.accent ? "accent" : ""}">
+      <div class="kpi-lbl">${escapeHtml(c.lbl)}</div>
+      <div class="kpi-val ${String(c.val).length > 12 ? "compact" : ""}">${escapeHtml(c.val)}</div>
+      <div class="kpi-sub">${escapeHtml(c.sub)}</div>
+    </div>`).join("");
+}
 function renderDashboard(){
   const total = state.chamados.length;
   const nAbertos = abertos().length;
@@ -129,13 +167,18 @@ function renderDashboard(){
   const duracoes = fechados.map(c => minutosEntre(c.abertura, c.conclusao)).filter(v => v != null);
   const mttr = duracoes.length ? Math.round(duracoes.reduce((a, b) => a + b, 0) / duracoes.length) : null;
 
+  const chaveSelecionada = renderOpcoesMesDashboard(fechados);
+  const fechadosPeriodo = fechados.filter(c => chaveMes(c.conclusao) === chaveSelecionada);
+  const duracoesPeriodo = fechadosPeriodo.map(c => minutosEntre(c.abertura, c.conclusao)).filter(v => v != null);
+  const mttrPeriodo = duracoesPeriodo.length ? Math.round(duracoesPeriodo.reduce((a, b) => a + b, 0) / duracoesPeriodo.length) : null;
+  pintarMttrPeriodo(mttr, duracoes, mttrPeriodo, duracoesPeriodo, chaveSelecionada);
+
   const topLocal = ranking("local", 1)[0];
   const topPat = ranking("patrimonio", 1, [PAT_INTERNO])[0];
 
   const cards = [
     { lbl: "Total de chamados", val: total, sub: `${concluidos().length} concluídos`, accent: false },
     { lbl: "Em aberto agora", val: nAbertos, sub: nAbertos ? "aguardando fechamento" : "fila limpa", accent: true },
-    { lbl: "Tempo médio (MTTR)", val: mttr == null ? "—" : fmtDuracao(mttr), sub: duracoes.length ? `base de ${duracoes.length} com tempo registrado` : "nenhum tempo registrado ainda", accent: false },
     { lbl: "Local com mais demanda", val: topLocal ? topLocal[0] : "—", sub: topLocal ? `${topLocal[1]} chamados` : "sem dados", accent: false },
     { lbl: "Patrimônio crítico", val: topPat ? topPat[0] : "—", sub: topPat ? `${topPat[1]} manutenções` : "sem dados", accent: false }
   ];
