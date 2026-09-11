@@ -63,6 +63,14 @@ function fmtDataHora(iso){
   if(isNaN(d)) return "—";
   return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
+function fmtDataHoraLinhas(iso){
+  if(!iso) return "—";
+  const d = new Date(iso);
+  if(isNaN(d)) return "—";
+  const data = `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+  const hora = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `<span class="data-linha">${data}</span><span class="data-linha muted-inline">${hora}</span>`;
+}
 function minutosEntre(inicioIso, fimIso){
   const a = new Date(inicioIso), b = new Date(fimIso);
   if(isNaN(a) || isNaN(b)) return null;

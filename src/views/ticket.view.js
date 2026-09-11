@@ -84,11 +84,11 @@ function renderHistorico(){
       <td>${escapeHtml(c.tipo)}</td>
       <td title="${escapeHtml(enderecoDe(c.local))}">${escapeHtml(c.local)}</td>
       <td class="mono">${escapeHtml(c.patrimonio)}${c.patrimonioNovo ? ` → ${escapeHtml(c.patrimonioNovo)}` : ""}</td>
-      <td class="mono">${fmtDataHora(c.abertura)}</td>
-      <td class="mono">${fmtDataHora(c.conclusao)}</td>
+      <td class="mono">${fmtDataHoraLinhas(c.abertura)}</td>
+      <td class="mono">${fmtDataHoraLinhas(c.conclusao)}</td>
       <td class="mono ${min == null ? "text-muted-2" : "text-ember"}">${min == null ? "Não informado" : fmtDuracao(min)}</td>
       <td><div class="cell-clip">${escapeHtml(c.solucao || "—")}</div></td>
-      <td class="nowrap">
+      <td class="hist-actions">
         <button class="btn btn-quiet btn-sm" data-editar="${escapeHtml(c.id)}">Editar</button>
         <button class="btn btn-danger btn-sm" data-excluir="${escapeHtml(c.id)}">Excluir</button>
       </td>
