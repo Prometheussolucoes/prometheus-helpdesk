@@ -10,14 +10,13 @@
 }
 .brand{display:flex;align-items:center;gap:11px;min-width:0}
 .brand-mark{
-  width:11px;height:11px;border-radius:50%;flex:none;
-  background:var(--flame);
-  box-shadow:0 0 0 3px rgba(255,106,0,.16), 0 0 16px 2px rgba(255,106,0,.6);
+  width:26px;height:26px;object-fit:contain;flex:none;display:block;
+  filter:drop-shadow(0 0 6px rgba(255,106,0,.55));
   animation:ember 3.4s ease-in-out infinite;
 }
 @keyframes ember{
-  0%,100%{box-shadow:0 0 0 3px rgba(255,106,0,.14), 0 0 14px 2px rgba(255,106,0,.5)}
-  50%{box-shadow:0 0 0 5px rgba(255,106,0,.07), 0 0 22px 4px rgba(255,106,0,.8)}
+  0%,100%{filter:drop-shadow(0 0 5px rgba(255,106,0,.45))}
+  50%{filter:drop-shadow(0 0 10px rgba(255,106,0,.85))}
 }
 .brand-name{
   font-family:var(--font-display);font-weight:700;font-size:19px;
