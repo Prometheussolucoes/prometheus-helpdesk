@@ -2,13 +2,13 @@
 
 const SQLiteMini = (() => {
   const TABELA = "chamados";
-  const COLUNAS = ["id","solicitante","local","patrimonio","patrimonio_novo","tipo",
+  const COLUNAS = ["id","solicitante","local","patrimonio","patrimonio_novo","tipo","contrato",
                    "abertura","conclusao","tempo_minutos","defeito","solucao",
                    "anotacoes","status","origem","criado_em","atualizado_em"];
   const SQL_CRIA =
     "CREATE TABLE chamados (\n" +
     "  id TEXT,\n  solicitante TEXT,\n  local TEXT,\n  patrimonio TEXT,\n" +
-    "  patrimonio_novo TEXT,\n  tipo TEXT,\n  abertura TEXT,\n  conclusao TEXT,\n" +
+    "  patrimonio_novo TEXT,\n  tipo TEXT,\n  contrato TEXT,\n  abertura TEXT,\n  conclusao TEXT,\n" +
     "  tempo_minutos INTEGER,\n  defeito TEXT,\n  solucao TEXT,\n  anotacoes TEXT,\n" +
     "  status TEXT,\n  origem TEXT,\n  criado_em TEXT,\n  atualizado_em TEXT\n)";
 

@@ -4,6 +4,8 @@ function limparFormNovo(){
   marcarErro("f_abertura", false);
   mostrarEndereco("f_localEndereco", "");
   preencherSelectTipo($("#f_tipo"), "Manutenção");
+  preencherSelectContrato($("#f_contrato"), "", "— selecione o contrato —");
+  marcarErro("f_contrato", false);
   aplicarTipoNoForm();
   renderProximoId();
 }
@@ -12,10 +14,16 @@ function preencherSelectTipo(el, valorAtual, placeholder){
     TIPOS.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
   el.value = valorAtual || "";
 }
+function preencherSelectContrato(el, valorAtual, placeholder){
+  el.innerHTML = (placeholder != null ? `<option value="">${escapeHtml(placeholder)}</option>` : "") +
+    CONTRATOS.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+  el.value = valorAtual || "";
+}
 const DICAS_TIPO = {
   "Manutenção": "Atendimento corretivo solicitado pelo cliente.",
   "Manutenção preventiva": `Chamado aberto pela Prometheus. O patrimônio ${PAT_INTERNO}, de uso interno da TI, entra automaticamente.`,
   "Troca de equipamento": "Registre agora o patrimônio do equipamento antigo. O novo é informado no fechamento.",
+  "Troca de insumos": "Troca de consumíveis, como toner, cartucho, cabos ou acessórios.",
   "Solicitação de equipamento": "Pedido de equipamento. Use N/A quando ainda não houver patrimônio envolvido."
 };
 function aplicarTipoNoForm(){
@@ -27,6 +35,7 @@ function aplicarTipoNoForm(){
   else if(pat.value.trim() === PAT_INTERNO){ pat.value = ""; }
 }
 $("#f_tipo").addEventListener("change", aplicarTipoNoForm);
+$("#f_contrato").addEventListener("change", () => marcarErro("f_contrato", false));
 $("#f_local").addEventListener("change", () => mostrarEndereco("f_localEndereco", $("#f_local").value));
 $("#e_local").addEventListener("change", () => mostrarEndereco("e_localEndereco", $("#e_local").value));
 $("#btnLimparForm").addEventListener("click", limparFormNovo);
@@ -37,17 +46,19 @@ $("#btnCriar").addEventListener("click", async () => {
   const local = $("#f_local").value.trim();
   const patrimonio = $("#f_patrimonio").value.trim();
   const abertura = deInput($("#f_abertura").value);
+  const contrato = $("#f_contrato").value;
 
   marcarErro("f_solicitante", !solicitante);
   marcarErro("f_local", !local);
   marcarErro("f_patrimonio", !patrimonio);
   marcarErro("f_abertura", !abertura);
-  if(!solicitante || !local || !patrimonio || !abertura){
+  marcarErro("f_contrato", !contrato);
+  if(!solicitante || !local || !patrimonio || !abertura || !contrato){
     toast("Faltam informações", "Preencha os campos destacados para registrar o chamado.", "err");
     return;
   }
   const c = criarChamado({
-    solicitante, local, patrimonio, abertura,
+    solicitante, local, patrimonio, abertura, contrato,
     tipo: $("#f_tipo").value || "Manutenção",
     defeito: $("#f_defeito").value.trim(),
     anotacoes: $("#f_anotacoes").value.trim(),
@@ -133,6 +144,7 @@ function abrirEdicao(id){
   mostrarEndereco("e_localEndereco", c.local);
   $("#e_patrimonio").value = c.patrimonio;
   preencherSelectTipo($("#e_tipo"), c.tipo);
+  preencherSelectContrato($("#e_contrato"), c.contrato === "Não informado" ? "" : c.contrato, "— não informado —");
   $("#e_patrimonioNovo").value = c.patrimonioNovo || "";
   $("#e_status").value = c.status;
   $("#e_abertura").value = paraInput(c.abertura);
@@ -172,6 +184,7 @@ $("#btnSalvarEdicao").addEventListener("click", async () => {
   atualizarChamado(c.id, {
     solicitante, local, patrimonio, status,
     tipo: $("#e_tipo").value || c.tipo,
+    contrato: $("#e_contrato").value || "",
     patrimonioNovo: $("#e_patrimonioNovo").value.trim(),
     abertura: abertura.toISOString(),
     conclusao: status === "CONCLUIDO" && conclusao ? conclusao.toISOString() : null,

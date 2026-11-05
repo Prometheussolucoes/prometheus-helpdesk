@@ -2,7 +2,7 @@ function paraLinhaSql(c){
   return {
     id: c.id, solicitante: c.solicitante, local: c.local,
     patrimonio: c.patrimonio, patrimonio_novo: c.patrimonioNovo || null,
-    tipo: c.tipo, abertura: c.abertura, conclusao: c.conclusao || null,
+    tipo: c.tipo, contrato: c.contrato || null, abertura: c.abertura, conclusao: c.conclusao || null,
     tempo_minutos: tempoAtendimento(c),
     defeito: c.defeito || null, solucao: c.solucao || null, anotacoes: c.anotacoes || null,
     status: c.status, origem: c.origem || "manual",
@@ -20,6 +20,7 @@ function deLinhaSql(r){
     patrimonio: r.patrimonio || "N/A",
     patrimonioNovo: r.patrimonio_novo || "",
     tipo: casarTipo(r.tipo) || "Manutenção",
+    contrato: casarContrato(r.contrato) || "",
     abertura: abertura.toISOString(),
     conclusao: status === "CONCLUIDO" && conclusao ? conclusao.toISOString() : null,
     defeito: r.defeito || "", solucao: r.solucao || "", anotacoes: r.anotacoes || "",
