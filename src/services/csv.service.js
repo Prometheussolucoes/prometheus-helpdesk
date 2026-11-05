@@ -64,7 +64,7 @@ function campoCSV(valor, sep){
 function gerarCSV(lista, sep){
   const colunas = ["ID_Chamado","Solicitante","Local","Patrimonio","Data_Abertura","Data_Conclusao",
                    "Tempo_Atendimento_Minutos","Tempo_Atendimento_Formatado","Defeito","Solucao","Anotacoes","Status",
-                   "Tipo","Patrimonio_Novo"];
+                   "Tipo","Contrato","Patrimonio_Novo"];
   const linhas = [colunas.join(sep)];
   lista.forEach(c => {
     const min = tempoAtendimento(c);
@@ -76,7 +76,7 @@ function gerarCSV(lista, sep){
       min == null ? "" : fmtDuracao(min),
       c.defeito, c.solucao, c.anotacoes,
       c.status === "CONCLUIDO" ? "CONCLUÍDO" : "ABERTO",
-      c.tipo, c.patrimonioNovo
+      c.tipo, c.contrato, c.patrimonioNovo
     ];
     linhas.push(valores.map(v => campoCSV(v, sep)).join(sep));
   });

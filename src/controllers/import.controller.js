@@ -70,6 +70,7 @@ const CAMPOS_IMPORT = [
   { chave:"defeito",     rotulo:"Defeito relatado",         dicas:["defeito","problema","ocorrencia","descricao","falha","motivo","solicitacao de servico","assunto"] },
   { chave:"anotacoes",   rotulo:"Anotações gerais",         dicas:["anotacao","anotacoes","observacao","observacoes","obs","comentario","detalhes"] },
   { chave:"tipo",        rotulo:"Tipo de chamado",          dicas:["tipo","categoria","natureza","servico","classificacao"] },
+  { chave:"contrato",    rotulo:"Contrato de atendimento",  dicas:["contrato","contract"] },
   { chave:"solucao",     rotulo:"Solução aplicada",         dicas:["solucao","resolucao","acao realizada","providencia","atendimento realizado","resolvido"] }
 ];
 let importState = null;
@@ -115,6 +116,7 @@ function montarPreview(){
       patrimonio: patBruto || (tipo === "Manutenção preventiva" ? PAT_INTERNO : "N/A"),
       patrimonioNovo: "",
       tipo: tipo,
+      contrato: casarContrato(pega("contrato")) || "",
       abertura: dAbertura,
       conclusao: null,               
       defeito: pega("defeito"),
@@ -157,6 +159,7 @@ function desenharPreview(){
       <td><span class="flag ${r.repetido ? "" : "new"}">${motivo}</span></td>
       <td>${escapeHtml(r.solicitante)}</td>
       <td>${escapeHtml(r.tipo)}</td>
+      <td>${escapeHtml(r.contrato || "—")}</td>
       <td>${escapeHtml(r.local)}</td>
       <td class="mono">${escapeHtml(r.patrimonio)}</td>
       <td class="mono">${fmtDataHora(r.abertura.toISOString())}</td>

@@ -29,20 +29,33 @@ function casarPolo(texto){
   return achado ? achado.nome : "";
 }
 
-const TIPOS = ["Manutenção", "Manutenção preventiva", "Troca de equipamento", "Solicitação de equipamento"];
-const PAT_INTERNO = "20261000";   
+const TIPOS = ["Manutenção", "Manutenção preventiva", "Troca de equipamento", "Troca de insumos", "Solicitação de equipamento"];
+const PAT_INTERNO = "20261000";
 function casarTipo(texto){
   const n = normalize(texto);
   if(!n) return "";
   const exato = TIPOS.find(t => normalize(t) === n);
   if(exato) return exato;
   if(/preventiv/.test(n)) return "Manutenção preventiva";
+  if(/insumo/.test(n)) return "Troca de insumos";
   if(/(troca|substitui)/.test(n)) return "Troca de equipamento";
   if(/(solicit|pedido|requisi)/.test(n)) return "Solicitação de equipamento";
   if(/(manuten|corretiv|conserto|reparo)/.test(n)) return "Manutenção";
   return "";
 }
 function ehInterno(c){ return String(c.patrimonio || "").trim() === PAT_INTERNO; }
+
+const CONTRATOS = ["Impressoras", "Computadores", "Rede Lógica"];
+function casarContrato(texto){
+  const n = normalize(texto);
+  if(!n) return "";
+  const exato = CONTRATOS.find(c => normalize(c) === n);
+  if(exato) return exato;
+  if(/impressora|toner|cartucho/.test(n)) return "Impressoras";
+  if(/(rede|logica|network|cabeamento|wifi|switch)/.test(n)) return "Rede Lógica";
+  if(/(computador|notebook|desktop|pc\b)/.test(n)) return "Computadores";
+  return "";
+}
 
 function tempoAtendimento(c){
   return c.status === "CONCLUIDO" && c.conclusao ? minutosEntre(c.abertura, c.conclusao) : null;

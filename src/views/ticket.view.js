@@ -82,6 +82,7 @@ function renderHistorico(){
       <td class="mono id">${escapeHtml(c.id)}</td>
       <td>${escapeHtml(c.solicitante)}</td>
       <td>${escapeHtml(c.tipo)}</td>
+      <td>${escapeHtml(c.contrato)}</td>
       <td title="${escapeHtml(enderecoDe(c.local))}">${escapeHtml(c.local)}</td>
       <td class="mono">${escapeHtml(c.patrimonio)}${c.patrimonioNovo ? ` → ${escapeHtml(c.patrimonioNovo)}` : ""}</td>
       <td class="mono">${fmtDataHoraLinhas(c.abertura)}</td>
@@ -192,6 +193,7 @@ function renderDashboard(){
   pintarRanking("rankSolicitantes", ranking("solicitante", 6));
   pintarRanking("rankPatrimonios", ranking("patrimonio", 6, [PAT_INTERNO]), "manutenções");
   pintarRanking("rankLocais", ranking("local", 6));
+  pintarRanking("rankContratos", ranking("contrato", 6));
   pintarRanking("rankTipos", ranking("tipo", 6));
 
   const agora = Date.now();

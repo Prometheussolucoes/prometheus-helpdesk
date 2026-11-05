@@ -158,6 +158,6 @@ function renderFiltrosLocal(){
 function combina(c, termo){
   if(!termo) return true;
   const t = normalize(termo);
-  return [c.id, c.solicitante, c.local, c.patrimonio, c.defeito, c.solucao, c.anotacoes]
+  return [c.id, c.solicitante, c.local, c.patrimonio, c.contrato, c.defeito, c.solucao, c.anotacoes]
     .some(v => normalize(v).indexOf(t) >= 0);
 }

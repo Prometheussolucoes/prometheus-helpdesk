@@ -90,7 +90,7 @@
     </div>
     <div class="card">
      <div class="grid grid-2">
-      <div class="field span-2">
+      <div class="field">
        <label class="lbl" for="f_tipo">
         Tipo de chamado
         <span class="req">
@@ -100,6 +100,19 @@
        <select id="f_tipo">
        </select>
        <span class="addr" id="f_tipoHint">
+       </span>
+      </div>
+      <div class="field">
+       <label class="lbl" for="f_contrato">
+        Contrato de atendimento
+        <span class="req">
+         *
+        </span>
+       </label>
+       <select id="f_contrato">
+       </select>
+       <span class="field-error">
+        Escolha o contrato de atendimento.
        </span>
       </div>
       <div class="field">
@@ -241,13 +254,14 @@
     <div class="table-wrap">
      <table class="table-historico">
       <colgroup>
+       <col style="width:7%"/>
+       <col style="width:11%"/>
+       <col style="width:9%"/>
+       <col style="width:9%"/>
+       <col style="width:9%"/>
+       <col style="width:10%"/>
        <col style="width:8%"/>
-       <col style="width:13%"/>
-       <col style="width:10%"/>
-       <col style="width:12%"/>
-       <col style="width:10%"/>
-       <col style="width:9%"/>
-       <col style="width:9%"/>
+       <col style="width:8%"/>
        <col style="width:6%"/>
        <col style="width:11%"/>
        <col style="width:12%"/>
@@ -262,6 +276,9 @@
         </th>
         <th>
          Tipo
+        </th>
+        <th>
+         Contrato
         </th>
         <th>
          Local
@@ -352,7 +369,17 @@
       </div>
      </div>
     </div>
-    <div class="grid grid-2 mt-16">
+    <div class="grid grid-3 mt-16">
+     <div class="card">
+      <div class="card-title">
+       Chamados por contrato
+      </div>
+      <div class="card-hint">
+       Volume de atendimento por contrato
+      </div>
+      <div class="rank" id="rankContratos">
+      </div>
+     </div>
      <div class="card">
       <div class="card-title">
        Chamados por tipo
@@ -684,6 +711,13 @@
        </select>
       </div>
       <div class="field">
+       <label class="lbl" for="e_contrato">
+        Contrato de atendimento
+       </label>
+       <select id="e_contrato">
+       </select>
+      </div>
+      <div class="field">
        <label class="lbl" for="e_status">
         Situação
        </label>
@@ -861,6 +895,9 @@
          </th>
          <th>
           Tipo
+         </th>
+         <th>
+          Contrato
          </th>
          <th>
           Polo
