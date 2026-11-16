@@ -115,6 +115,15 @@
         Escolha o contrato de atendimento.
        </span>
       </div>
+      <div class="field" hidden="" id="wrap_f_equipamentoTipo">
+       <label class="lbl" for="f_equipamentoTipo">
+        Tipo de equipamento
+       </label>
+       <input autocomplete="off" id="f_equipamentoTipo" placeholder="Ex.: Torre, Notebook, Monitor" type="text"/>
+       <span class="addr">
+        Usado no termo de manutenção de computadores.
+       </span>
+      </div>
       <div class="field">
        <label class="lbl" for="f_solicitante">
         Nome do solicitante
@@ -717,6 +726,12 @@
        <select id="e_contrato">
        </select>
       </div>
+      <div class="field" hidden="" id="wrap_e_equipamentoTipo">
+       <label class="lbl" for="e_equipamentoTipo">
+        Tipo de equipamento
+       </label>
+       <input autocomplete="off" id="e_equipamentoTipo" placeholder="Ex.: Torre, Notebook, Monitor" type="text"/>
+      </div>
       <div class="field">
        <label class="lbl" for="e_status">
         Situação
@@ -779,6 +794,9 @@
     <div class="modal-foot">
      <button class="btn btn-danger left" id="btnExcluir">
       Excluir chamado
+     </button>
+     <button class="btn btn-ghost" id="btnBaixarTermo">
+      Baixar termo
      </button>
      <button class="btn btn-quiet" data-close="modalEditar">
       Cancelar
@@ -939,6 +957,8 @@
   <script defer="" src="src/models/ticket.model.js">
   </script>
   <script defer="" src="src/services/csv.service.js">
+  </script>
+  <script defer="" src="src/services/termo.service.js">
   </script>
   <script defer="" src="src/services/sqlite.service.js">
   </script>

@@ -1,5 +1,5 @@
 function limparFormNovo(){
-  ["f_solicitante","f_local","f_patrimonio","f_defeito","f_anotacoes"].forEach(id => { $("#" + id).value = ""; marcarErro(id, false); });
+  ["f_solicitante","f_local","f_patrimonio","f_defeito","f_anotacoes","f_equipamentoTipo"].forEach(id => { $("#" + id).value = ""; marcarErro(id, false); });
   $("#f_abertura").value = paraInput(new Date());
   marcarErro("f_abertura", false);
   mostrarEndereco("f_localEndereco", "");
@@ -7,7 +7,11 @@ function limparFormNovo(){
   preencherSelectContrato($("#f_contrato"), "", "— selecione o contrato —");
   marcarErro("f_contrato", false);
   aplicarTipoNoForm();
+  aplicarContratoNoForm();
   renderProximoId();
+}
+function aplicarContratoNoForm(){
+  $("#wrap_f_equipamentoTipo").hidden = $("#f_contrato").value !== "Computadores";
 }
 function preencherSelectTipo(el, valorAtual, placeholder){
   el.innerHTML = (placeholder != null ? `<option value="">${escapeHtml(placeholder)}</option>` : "") +
@@ -35,9 +39,10 @@ function aplicarTipoNoForm(){
   else if(pat.value.trim() === PAT_INTERNO){ pat.value = ""; }
 }
 $("#f_tipo").addEventListener("change", aplicarTipoNoForm);
-$("#f_contrato").addEventListener("change", () => marcarErro("f_contrato", false));
+$("#f_contrato").addEventListener("change", () => { marcarErro("f_contrato", false); aplicarContratoNoForm(); });
 $("#f_local").addEventListener("change", () => mostrarEndereco("f_localEndereco", $("#f_local").value));
 $("#e_local").addEventListener("change", () => mostrarEndereco("e_localEndereco", $("#e_local").value));
+$("#e_contrato").addEventListener("change", () => { $("#wrap_e_equipamentoTipo").hidden = $("#e_contrato").value !== "Computadores"; });
 $("#btnLimparForm").addEventListener("click", limparFormNovo);
 $("#f_abertura").addEventListener("change", renderProximoId);
 
@@ -60,6 +65,7 @@ $("#btnCriar").addEventListener("click", async () => {
   const c = criarChamado({
     solicitante, local, patrimonio, abertura, contrato,
     tipo: $("#f_tipo").value || "Manutenção",
+    equipamentoTipo: $("#f_equipamentoTipo").value.trim(),
     defeito: $("#f_defeito").value.trim(),
     anotacoes: $("#f_anotacoes").value.trim(),
     status: "ABERTO", origem: "manual"
@@ -145,6 +151,8 @@ function abrirEdicao(id){
   $("#e_patrimonio").value = c.patrimonio;
   preencherSelectTipo($("#e_tipo"), c.tipo);
   preencherSelectContrato($("#e_contrato"), c.contrato === "Não informado" ? "" : c.contrato, "— não informado —");
+  $("#e_equipamentoTipo").value = c.equipamentoTipo || "";
+  $("#wrap_e_equipamentoTipo").hidden = c.contrato !== "Computadores";
   $("#e_patrimonioNovo").value = c.patrimonioNovo || "";
   $("#e_status").value = c.status;
   $("#e_abertura").value = paraInput(c.abertura);
@@ -185,6 +193,7 @@ $("#btnSalvarEdicao").addEventListener("click", async () => {
     solicitante, local, patrimonio, status,
     tipo: $("#e_tipo").value || c.tipo,
     contrato: $("#e_contrato").value || "",
+    equipamentoTipo: $("#e_equipamentoTipo").value.trim(),
     patrimonioNovo: $("#e_patrimonioNovo").value.trim(),
     abertura: abertura.toISOString(),
     conclusao: status === "CONCLUIDO" && conclusao ? conclusao.toISOString() : null,
@@ -212,6 +221,15 @@ async function excluirChamado(id, fecharEdicao){
   toast("Chamado excluído", `${c.id} foi removido da base.`, "alert");
 }
 $("#btnExcluir").addEventListener("click", () => excluirChamado(idEditando, true));
+$("#btnBaixarTermo").addEventListener("click", () => {
+  const c = buscarChamado(idEditando);
+  if(!c) return;
+  if(CONTRATOS.indexOf(c.contrato) < 0){
+    toast("Sem contrato definido", "Escolha e salve um contrato de atendimento (Impressoras, Computadores ou Rede Lógica) antes de gerar o termo.", "err");
+    return;
+  }
+  baixarTermo(c);
+});
 
 document.addEventListener("click", (ev) => {
   const fechar = ev.target.closest("[data-fechar]");
