@@ -27,6 +27,7 @@ function sanear(c){
   c.patrimonioNovo = c.patrimonioNovo || "";
   c.tipo = casarTipo(c.tipo) || c.tipo || "Manutenção";
   c.contrato = c.contrato || "Não informado";
+  c.equipamentoTipo = c.equipamentoTipo || "";
   c.defeito = c.defeito || "";
   c.solucao = c.solucao || "";
   c.anotacoes = c.anotacoes || "";
@@ -71,6 +72,7 @@ function criarChamado(dados, reservados){
     patrimonioNovo: dados.patrimonioNovo || "",
     tipo: dados.tipo || "Manutenção",
     contrato: dados.contrato || "",
+    equipamentoTipo: dados.equipamentoTipo || "",
     abertura: abertura.toISOString(),
     conclusao: dados.conclusao ? new Date(dados.conclusao).toISOString() : null,
     defeito: dados.defeito || "",
