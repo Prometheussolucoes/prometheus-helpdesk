@@ -221,15 +221,16 @@ async function excluirChamado(id, fecharEdicao){
   toast("Chamado excluído", `${c.id} foi removido da base.`, "alert");
 }
 $("#btnExcluir").addEventListener("click", () => excluirChamado(idEditando, true));
-$("#btnBaixarTermo").addEventListener("click", () => {
-  const c = buscarChamado(idEditando);
+function baixarTermoDoChamado(id){
+  const c = buscarChamado(id);
   if(!c) return;
   if(CONTRATOS.indexOf(c.contrato) < 0){
     toast("Sem contrato definido", "Escolha e salve um contrato de atendimento (Impressoras, Computadores ou Rede Lógica) antes de gerar o termo.", "err");
     return;
   }
   baixarTermo(c);
-});
+}
+$("#btnBaixarTermo").addEventListener("click", () => baixarTermoDoChamado(idEditando));
 
 document.addEventListener("click", (ev) => {
   const fechar = ev.target.closest("[data-fechar]");
@@ -238,6 +239,8 @@ document.addEventListener("click", (ev) => {
   if(editar){ abrirEdicao(editar.getAttribute("data-editar")); return; }
   const excluir = ev.target.closest("[data-excluir]");
   if(excluir){ excluirChamado(excluir.getAttribute("data-excluir"), false); return; }
+  const termo = ev.target.closest("[data-termo]");
+  if(termo){ baixarTermoDoChamado(termo.getAttribute("data-termo")); return; }
   const ir = ev.target.closest("[data-goto]");
   if(ir){ abrirAba(ir.getAttribute("data-goto")); }
 });

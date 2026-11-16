@@ -45,6 +45,7 @@ function renderFila(){
         <div class="ticket-actions">
           <button class="btn btn-danger btn-sm" data-excluir="${escapeHtml(c.id)}">Excluir</button>
           <button class="btn btn-ghost btn-sm" data-editar="${escapeHtml(c.id)}">Editar</button>
+          ${CONTRATOS.indexOf(c.contrato) >= 0 ? `<button class="btn btn-ghost btn-sm" data-termo="${escapeHtml(c.id)}">Termo</button>` : ""}
           <button class="btn btn-primary btn-sm" data-fechar="${escapeHtml(c.id)}">Concluir</button>
         </div>
       </div>
@@ -91,6 +92,7 @@ function renderHistorico(){
       <td><div class="cell-clip">${escapeHtml(c.solucao || "—")}</div></td>
       <td class="hist-actions">
         <button class="btn btn-quiet btn-sm" data-editar="${escapeHtml(c.id)}">Editar</button>
+        ${CONTRATOS.indexOf(c.contrato) >= 0 ? `<button class="btn btn-quiet btn-sm" data-termo="${escapeHtml(c.id)}">Termo</button>` : ""}
         <button class="btn btn-danger btn-sm" data-excluir="${escapeHtml(c.id)}">Excluir</button>
       </td>
     </tr>`;
