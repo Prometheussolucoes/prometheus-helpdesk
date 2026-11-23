@@ -1,3 +1,9 @@
+function contratoBadge(c){
+  if(CONTRATOS.indexOf(c.contrato) < 0) return "";
+  const classe = "contrato-" + normalize(c.contrato).replace(/\s+/g, "-");
+  return `<span class="contrato-tag ${classe}">${escapeHtml(c.contrato)}</span>`;
+}
+
 function renderFila(){
   const termo = $("#filaBusca").value;
   const local = $("#filaLocal").value;
@@ -25,7 +31,7 @@ function renderFila(){
     const tier = tierDe(min);
     return `<article class="ticket" style="--tier:${tier.cor}">
       <div class="ticket-main">
-        <div class="ticket-id">${escapeHtml(c.id)}${c.origem === "importado" ? " · importado" : ""}</div>
+        <div class="ticket-id">${escapeHtml(c.id)}${c.origem === "importado" ? " · importado" : ""}${contratoBadge(c)}</div>
         <div class="ticket-who">${escapeHtml(c.solicitante)}</div>
         <div class="ticket-meta">
           <span>Tipo <b>${escapeHtml(c.tipo)}</b></span>
